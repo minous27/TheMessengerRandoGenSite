@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,6 +26,46 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.settings {
+  margin: auto;
+  margin-top: 10px;
+  padding: 10px;
+  border: 3px solid black;
+  width: 50%;
+  height: 50%;
+  overflow: hidden;
+}
+
+.logic-checkbox-section{
+  padding-bottom: 10px;
+  font-weight: bold;
+  font-size: large;
+}
+
+.section-title{
+  margin-top: 0px;
+  border-bottom: 3px solid black;
+}
+
+.file-slot-section{
+  display: inline;
+  border-right: 3px solid black;
+  float: left;
+  width: 50%;
+}
+
+.file-slot-selection{
+  text-align: left;
+  font-weight: bold;
+}
+
+.difficulty-section{
+  display: inline;
+  text-align: center;
+  font-weight: bold;
+  width: 50%;
 }
 
 @keyframes App-logo-spin {
