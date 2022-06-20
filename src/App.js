@@ -1,22 +1,43 @@
 import { useState } from 'react';
 import './App.css';
 import background from './assets/PHEMORE.jpg'
+import * as utilMethods from './SeedGenerator'
+import {LocationRO} from './RO/LocationRO';
+import * as constantMethods from './config/rando-config'
 
 
 function App() {
   const [useLogicEngine, isUseLogicEngine] = useState(false);
   const [fileSlot, setFileSlot] = useState(1);
   const [difficulty, setDifficulty] = useState("basic")
+  const [seed, setSeed] = useState({seedNum: 0, isLogicalSeed: false, difficulty:""});
   const [log, setLog] = useState("");
+
 
 
   let onEnterSettingsData = () =>{
     
+    //prep locations string for logging purposes.
+    let locationsStr = "";
+    
+    constantMethods.basicLocations.forEach((currentValue, index, arr) => {
+      let locationStr =  currentValue.ToString();
+      locationsStr = locationsStr + locationStr + "\n";
+    });
+
+    //set seed info
+    seed.seedNum = utilMethods.GenerateSeed();
+    seed.isLogicalSeed = useLogicEngine;
+    seed.difficulty = difficulty;
+
+    //log
     setLog(
       "Settings:\n"
       + "Use Logic Engine = " + useLogicEngine + "\n"
       + "Fileslot = " + fileSlot + "\n"
-      + "Difficulty = " + difficulty + "\n");
+      + "Difficulty = " + difficulty + "\n"
+      + "Seed info = " + "Seed num:'" + seed.seedNum + "' Is Logical: '" + seed.isLogicalSeed + "' Difficulty: '" + seed.difficulty + "'" + "\n"
+      + "Location = " + locationsStr + "\n");
   }
 
   let generateRandoFile = () =>{
