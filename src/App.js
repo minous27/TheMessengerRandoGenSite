@@ -30,6 +30,10 @@ function App() {
     seed.isLogicalSeed = useLogicEngine;
     seed.difficulty = difficulty;
 
+    //generate seed mappings
+    utilMethods.GenerateRandomizedMappings(seed);
+
+
     //log
     setLog(
       "Settings:\n"
