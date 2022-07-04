@@ -19,6 +19,9 @@ function App() {
     
     //prep locations string for logging purposes.
     let locationsStr = "";
+    let mappingStr = "|";
+
+    let seedNumInput = document.getElementById("seedNum").value;
     
     constantMethods.basicLocations.forEach((currentValue, index, arr) => {
       let locationStr =  currentValue.ToString();
@@ -26,12 +29,24 @@ function App() {
     });
 
     //set seed info
-    seed.seedNum = utilMethods.GenerateSeed();
+    if(seedNumInput === '')
+    {
+      seed.seedNum = utilMethods.GenerateSeed();
+    }
+    else
+    {
+      seed.seedNum = seedNumInput;
+    }
+    
     seed.isLogicalSeed = useLogicEngine;
     seed.difficulty = difficulty;
 
     //generate seed mappings
-    utilMethods.GenerateRandomizedMappings(seed);
+    let mappings = utilMethods.GenerateRandomizedMappings(seed);
+
+    for (const[location, item] of mappings){
+      mappingStr = mappingStr + "Item: '" + item + "' ~ Location: '" + location.prettyLocationName + "'|\n"; 
+    }
 
 
     //log
@@ -41,7 +56,8 @@ function App() {
       + "Fileslot = " + fileSlot + "\n"
       + "Difficulty = " + difficulty + "\n"
       + "Seed info = " + "Seed num:'" + seed.seedNum + "' Is Logical: '" + seed.isLogicalSeed + "' Difficulty: '" + seed.difficulty + "'" + "\n"
-      + "Location = " + locationsStr + "\n");
+      + "Location = " + locationsStr + "\n"
+      + "Mappings = " + mappingStr + "\n");
   }
 
   let generateRandoFile = () =>{
@@ -59,8 +75,13 @@ function App() {
         <div className='settings'>
           <div className='logic-checkbox-section'>
             <label>
-            <input type="checkbox" onClick={(selection) => {isUseLogicEngine(selection.target.checked)}}/>
-            Use Logic Engine
+              <input type="checkbox" onClick={(selection) => {isUseLogicEngine(selection.target.checked)}}/>
+              Use Logic Engine
+            </label>
+            <br/>
+            <label>
+              <input type="number" id="seedNum" name="seedNum" min="0"/>
+              Seed (optional)
             </label>
           </div>
           <div className='file-slot-section'>
