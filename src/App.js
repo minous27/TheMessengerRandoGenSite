@@ -40,24 +40,33 @@ function App() {
     
     seed.isLogicalSeed = useLogicEngine;
     seed.difficulty = difficulty;
+    try
+    {
+      //generate seed mappings
+      let mappings = utilMethods.GenerateRandomizedMappings(seed);
 
-    //generate seed mappings
-    let mappings = utilMethods.GenerateRandomizedMappings(seed);
 
-    for (const[location, item] of mappings){
-      mappingStr = mappingStr + "Item: '" + item + "' ~ Location: '" + location.prettyLocationName + "'|\n"; 
+      for (const[location, item] of mappings){
+        mappingStr = mappingStr + "Item: '" + item + "' ~ Location: '" + location.prettyLocationName + "'|\n"; 
+      }
+  
+  
+      //log
+      setLog(
+        "Settings:\n"
+        + "Use Logic Engine = " + useLogicEngine + "\n"
+        + "Fileslot = " + fileSlot + "\n"
+        + "Difficulty = " + difficulty + "\n"
+        + "Seed info = " + "Seed num:'" + seed.seedNum + "' Is Logical: '" + seed.isLogicalSeed + "' Difficulty: '" + seed.difficulty + "'" + "\n"
+        + "Location = " + locationsStr + "\n"
+        + "Mappings = " + mappingStr + "\n");
     }
-
-
-    //log
-    setLog(
-      "Settings:\n"
-      + "Use Logic Engine = " + useLogicEngine + "\n"
-      + "Fileslot = " + fileSlot + "\n"
-      + "Difficulty = " + difficulty + "\n"
-      + "Seed info = " + "Seed num:'" + seed.seedNum + "' Is Logical: '" + seed.isLogicalSeed + "' Difficulty: '" + seed.difficulty + "'" + "\n"
-      + "Location = " + locationsStr + "\n"
-      + "Mappings = " + mappingStr + "\n");
+    catch(err)
+    {
+      //We would expect this if the mappings attempted were not logically completable.
+      setLog(`Seed generation failed. Reason: ${err.message}`);
+    }
+    
   }
 
   let generateRandoFile = () =>{
@@ -107,7 +116,7 @@ function App() {
           <button type='button' onClick={onEnterSettingsData}>Generate</button>
         </div>
         <div>
-          <textarea disabled value={log}/>
+          <textarea className='logbox' disabled value={log}/>
         </div>
       </form>
     </div>

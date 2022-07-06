@@ -37,14 +37,32 @@ export function GenerateRandomizedMappings(seed)
     {
         randomizedLocations = randomizedLocations.concat(advancedLocations);
         
-        let difference = randomizedLocations.length - randomizedItems.length;
+        let difference = randomizedLocations.length - randomizedItems.length - notesList.length;
 
         for(let i = 0; i < difference; i++)
         {
             randomizedItems.push("Time_Shard");
         }
     }
+
     
+    //Log item and location info for debugging purposes
+    console.log("Printing out list of locations we will be working with.");
+    for(let location of randomizedLocations)
+    {
+        console.log(location.prettyLocationName);
+    }
+    console.log("Printing out list of items we will be working with.");
+    for(let item of randomizedItems)
+    {
+        console.log(item);
+    }
+    for(let note of notesList)
+    {
+        console.log(note);
+    }
+    console.log(`Size of lists are:\nLocations: '${randomizedLocations.length}'\nItems: '${randomizedItems.length + notesList.length}'`);
+
     //Set up random number generator. Don' worry about the details, just know I have to do this before calling randomNumberGenerator()
     rand = (sfc32(0x9E3779B9, 0x243F6A88, 0xB7E15162, seed.seedNum));
 
@@ -85,8 +103,8 @@ export function GenerateRandomizedMappings(seed)
             //creating a breakout to help prevent infinite loops during generation.
             if(logicalMappingAttempts > REQUIRED_ITEM_PLACEMENT_ATTEMPT_LIMIT)
             {
-                console.warn("Item placement attempts exceeded.");
-                return;
+                let error = new Error(`Item placement attempts exceeded. The seed ${seed.seedNum} was not able to generate a beatable seed. Please try to generate again with a different seed.`);
+                throw error;
             }
 
                 //Now that the notes have a home, lets get all the items we are going to need to collect them. We will do this potentially a few times to ensure that all required items are accounted for.
@@ -201,7 +219,7 @@ function fastMapping(items)
         let locationIndex = randomNumberGenerator(randomizedLocations.length);
         console.log("Item Index '" + itemIndex +"' generated for item list with size '" + localItems.length + "'. Locations index '" + locationIndex + "' generated for location list with size '" + randomizedLocations.length + "'");
         localMappings.set(randomizedLocations[locationIndex], localItems[itemIndex]);
-        console.log("Fast mapping occurred! Added item'" + localItems[itemIndex] + "' at index '" + itemIndex + "' to location '" + randomizedLocations[locationIndex] + "' at index '" + locationIndex + "'");
+        console.log("Fast mapping occurred! Added item'" + localItems[itemIndex] + "' at index '" + itemIndex + "' to location '" + randomizedLocations[locationIndex].prettyLocationName + "' at index '" + locationIndex + "'");
 
         //Removing mapped items and locations
         randomizedLocations.splice(locationIndex, 1);
