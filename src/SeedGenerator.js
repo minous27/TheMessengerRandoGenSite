@@ -33,7 +33,7 @@ export function GenerateRandomizedMappings(seed)
 
     //Let's initialize whatever else we need.
 
-    if(seed.difficulty === "advanced")
+    if(seed.difficulty === "Advanced")
     {
         randomizedLocations = randomizedLocations.concat(advancedLocations);
         

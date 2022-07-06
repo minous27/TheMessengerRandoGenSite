@@ -9,8 +9,9 @@ import * as constantMethods from './config/rando-config'
 function App() {
   const [useLogicEngine, isUseLogicEngine] = useState(false);
   const [fileSlot, setFileSlot] = useState(1);
-  const [difficulty, setDifficulty] = useState("basic")
+  const [difficulty, setDifficulty] = useState("Basic")
   const [seed, setSeed] = useState({seedNum: 0, isLogicalSeed: false, difficulty:""});
+  const [mappingsStr, setMappingsStr] = useState();
   const [log, setLog] = useState("");
 
 
@@ -44,7 +45,10 @@ function App() {
     {
       //generate seed mappings
       let mappings = utilMethods.GenerateRandomizedMappings(seed);
+      prepareMappingString(mappings);
 
+      
+      
 
       for (const[location, item] of mappings){
         mappingStr = mappingStr + "Item: '" + item + "' ~ Location: '" + location.prettyLocationName + "'|\n"; 
@@ -65,11 +69,41 @@ function App() {
     {
       //We would expect this if the mappings attempted were not logically completable.
       setLog(`Seed generation failed. Reason: ${err.message}`);
+      mappingStr = null;
     }
-    
+    //Enable download button if mapping string is created
+    document.getElementById("downloadBtn").disabled = mappingStr ? false : true;
   }
 
-  let generateRandoFile = () =>{
+  const prepareMappingString = (mappings) =>{
+    //Get the mappings turned into a single string that is ready to be encrypted and given to the user.
+    
+    //mappings
+    let mappingsStr = "mappings=";
+
+    for(const [location, item] of mappings)
+    {
+      mappingsStr += `${location.locationName}-${item},`;
+    }
+    //Tear off the last comma
+    mappingsStr = mappingsStr.slice(0, -1);
+
+    //Difficulty
+    mappingsStr += `|Difficulty=${seed.difficulty}`;
+
+    //seed type
+    mappingsStr += `|seedtype=${seed.isLogicalSeed ? "Logic" : "No_Logic"}`;
+
+    //Seed number
+    mappingsStr += `|seednum=${seed.seedNum}`;
+
+    //log
+    console.log(`Mapping prep completed. String prepped for file: '${mappingsStr}'`);
+
+    setMappingsStr(mappingsStr);
+  }
+  
+  const generateRandoFile = () =>{
     //Will do the work to create the file and download it on client machine.
   }
 
@@ -106,14 +140,15 @@ function App() {
           </div>
           <div className='difficulty-section'>
             <h3 className='section-title'>Difficulty</h3>
-            <input type="radio" className='difficulty-setting' name='difficulty' value="basic" onClick={(selection) => {setDifficulty(selection.target.value)}} defaultChecked/>
+            <input type="radio" className='difficulty-setting' name='difficulty' value="Basic" onClick={(selection) => {setDifficulty(selection.target.value)}} defaultChecked/>
             <label>Basic Settings</label><br/>
-            <input type="radio" className='difficulty-setting' name='difficulty' value="advanced" onClick={(selection) => {setDifficulty(selection.target.value)}}/>
+            <input type="radio" className='difficulty-setting' name='difficulty' value="Advanced" onClick={(selection) => {setDifficulty(selection.target.value)}}/>
             <label>Advanced Settings</label>
           </div>
         </div>
         <div>
           <button type='button' onClick={onEnterSettingsData}>Generate</button>
+          <button type='button' id='downloadBtn' onClick={generateRandoFile} disabled>Download</button>
         </div>
         <div>
           <textarea className='logbox' disabled value={log}/>
