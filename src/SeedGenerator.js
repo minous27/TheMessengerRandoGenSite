@@ -83,6 +83,7 @@ export function GenerateRandomizedMappings(seed)
     if(!seed.isLogicalSeed)
     {
         //No logic needed, will just do fast mappings
+        fastMapping(notesList);
         fastMapping(randomizedItems);
 
         locationToItemMapping.forEach((value, key) => {

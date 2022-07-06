@@ -14,8 +14,6 @@ function App() {
   const [mappingsStr, setMappingsStr] = useState();
   const [log, setLog] = useState("");
 
-
-
   let onEnterSettingsData = () =>{
     
     //prep locations string for logging purposes.
@@ -71,8 +69,6 @@ function App() {
       setLog(`Seed generation failed. Reason: ${err.message}`);
       mappingStr = null;
     }
-    //Enable download button if mapping string is created
-    document.getElementById("downloadBtn").disabled = mappingStr ? false : true;
   }
 
   const prepareMappingString = (mappings) =>{
@@ -104,10 +100,28 @@ function App() {
   }
   
   const generateRandoFile = () =>{
+    console.log("Beginning rando file creation.");
     //Will do the work to create the file and download it on client machine.
+    
+    //DEPRECATED - may have to do this differently if moved to server
+    let encodedMappingsStr = btoa(mappingsStr);
+    console.log(`Encoded mappings string: '${encodedMappingsStr}'`);
+    
+    //Begin download
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodedMappingsStr);
+    element.setAttribute('download', `MessengerRandomizerMapping_${fileSlot}.txt`);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
   }
 
   return (
+
     <div className="App">
       <header className="App-header">
         <h1>The Messenger Randomizer Seed Generator</h1>
@@ -148,7 +162,7 @@ function App() {
         </div>
         <div>
           <button type='button' onClick={onEnterSettingsData}>Generate</button>
-          <button type='button' id='downloadBtn' onClick={generateRandoFile} disabled>Download</button>
+          <button type='button' id='downloadBtn' onClick={generateRandoFile} disabled={mappingsStr ? false : true}>Download</button>
         </div>
         <div>
           <textarea className='logbox' disabled value={log}/>
