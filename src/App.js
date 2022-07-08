@@ -79,7 +79,7 @@ function App() {
 
     for(const [location, item] of mappings)
     {
-      mappingsStr += `${location.locationName}-${item},`;
+      mappingsStr += `${location.locationName}~${item},`;
     }
     //Tear off the last comma
     mappingsStr = mappingsStr.slice(0, -1);

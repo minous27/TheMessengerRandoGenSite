@@ -13,7 +13,8 @@ let rand;
 
 let REQUIRED_ITEM_PLACEMENT_ATTEMPT_LIMIT = 50;
 
-export function GenerateSeed() {
+export function GenerateSeed() 
+{
     let today = Date.now();
 
     return (today & 0x0000BEEF);
@@ -41,7 +42,7 @@ export function GenerateRandomizedMappings(seed)
 
         for(let i = 0; i < difference; i++)
         {
-            randomizedItems.push("Time_Shard");
+            randomizedItems.push(`Timeshard_${i+1}`);
         }
     }
 
