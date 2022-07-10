@@ -14,8 +14,11 @@ function RandoForm() {
     const [genLog, setGenLog] = useState("");
     
 
-    let onEnterSettingsData = () =>{
+    const onEnterSettingsData = (event) =>{
         
+        event.preventDefault();
+        event.stopPropagation();
+
         //prep locations string for logging purposes.
         let locationsStr = "";
         let mappingStr = "|";
@@ -116,7 +119,7 @@ function RandoForm() {
     }
 
     return(
-        <form>
+        <form onSubmit={onEnterSettingsData}>
         <div className='settings'>
           <div className='logic-checkbox-section'>
             <label>
@@ -150,7 +153,7 @@ function RandoForm() {
           </div>
         </div>
         <div>
-          <button type='button' onClick={onEnterSettingsData}>Generate</button>
+          <button type='submit'>Generate</button>
           <button type='button' id='downloadBtn' onClick={generateRandoFile} disabled={mappingsStr ? false : true}>Download</button>
         </div>
         <textarea className='logbox' disabled value={genLog}/><br/>
