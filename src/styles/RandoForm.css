@@ -1,0 +1,64 @@
+form{
+    background-color: whitesmoke;
+    margin: auto;
+    width: 800px;
+}
+
+.settings {
+    margin: auto;
+    margin-top: 10px;
+    padding: 10px;
+    border: 3px solid black;
+    width: 500px;
+    height: 50%;
+    overflow: hidden;
+}
+
+.logic-checkbox-section{
+    padding-bottom: 10px;
+    font-weight: bold;
+    font-size: large;
+}
+
+.ruxxtin-gif{
+    height: 90px;
+    width: 160px;
+    display: inline;
+    margin-left: auto;
+    margin-right: 0;
+  }
+  
+.section-title{
+    margin-top: 0px;
+    border-bottom: 3px solid black;
+}
+  
+.file-slot-section{
+    display: inline;
+    border-right: 3px solid black;
+    float: left;
+    width: 50%;
+}
+  
+.file-slot-selection{
+    text-align: left;
+    font-weight: bold;
+}
+  
+.difficulty-section{
+    display: inline;
+    text-align: center;
+    font-weight: bold;
+    width: 50%;
+}
+  
+.logbox{
+    height: 96px;
+    width: 700px;
+    resize: vertical;
+}
+  
+.ee-trigger-27{
+    height: 5px;
+    width: 5px;
+}

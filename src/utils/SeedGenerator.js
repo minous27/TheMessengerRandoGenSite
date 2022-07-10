@@ -1,4 +1,5 @@
-import { advancedLocations, basicLocations, notesList, randoItemList } from "./config/rando-config";
+import log from 'loglevel';
+import { advancedLocations, basicLocations, notesList, randoItemList } from "../config/rando-config";
 
 let randomizedLocations;
 let randomizedItems;
@@ -22,7 +23,7 @@ export function GenerateSeed()
 
 export function GenerateRandomizedMappings(seed)
 {
-    console.log("Beginning mapping generation for seed '" + seed.seedNum + "'.");
+    log.debug("Beginning mapping generation for seed '" + seed.seedNum + "'.");
 
     //Initialize needed things
     randomizedLocations = [].concat(basicLocations); //Did this because things were weird with references in pointers
@@ -48,28 +49,28 @@ export function GenerateRandomizedMappings(seed)
 
     
     //Log item and location info for debugging purposes
-    console.log("Printing out list of locations we will be working with.");
+    log.debug("Printing out list of locations we will be working with.");
     for(let location of randomizedLocations)
     {
-        console.log(location.prettyLocationName);
+        log.debug(location.prettyLocationName);
     }
-    console.log("Printing out list of items we will be working with.");
+    log.debug("Printing out list of items we will be working with.");
     for(let item of randomizedItems)
     {
-        console.log(item);
+        log.debug(item);
     }
     for(let note of notesList)
     {
-        console.log(note);
+        log.debug(note);
     }
-    console.log(`Size of lists are:\nLocations: '${randomizedLocations.length}'\nItems: '${randomizedItems.length + notesList.length}'`);
+    log.debug(`Size of lists are:\nLocations: '${randomizedLocations.length}'\nItems: '${randomizedItems.length + notesList.length}'`);
 
     //Set up random number generator. Don' worry about the details, just know I have to do this before calling randomNumberGenerator()
     rand = (sfc32(0x9E3779B9, 0x243F6A88, 0xB7E15162, seed.seedNum));
 
    
     //advance the generator beforehand a few times (12-20 iterations) to mix the initial state thoroughly.
-    for (var i = 0; i < 15; i++) console.log(randomNumberGenerator(randomizedItems.length));
+    for (var i = 0; i < 15; i++) log.debug(randomNumberGenerator(randomizedItems.length));
 
     //Set up coin flips
     for (let location of randomizedLocations)
@@ -88,12 +89,12 @@ export function GenerateRandomizedMappings(seed)
         fastMapping(randomizedItems);
 
         locationToItemMapping.forEach((value, key) => {
-            console.log("Item '" + value + "' mapped to '" + key.prettyLocationName + "'");
+            log.debug("Item '" + value + "' mapped to '" + key.prettyLocationName + "'");
         })
     }
     else
     {
-        console.log("Logical mapping start!");
+        log.debug("Logical mapping start!");
         //Start by placing the notes then do the logic things!
         fastMapping(notesList);
 
@@ -168,7 +169,7 @@ export function GenerateRandomizedMappings(seed)
 
         //At this point we should be done with logical mapping. Let's cleanup the remaining items.
         fastMapping(randomizedItems);
-        console.log("Basic logic mapping completed.");
+        log.debug("Basic logic mapping completed.");
     }
 
     //The mappings should be created now.
@@ -200,7 +201,7 @@ function sfc32(a, b, c, d) {
 
 function randomNumberGenerator(maxRandValue)
 {
-    console.log("Working with a max value of: " + maxRandValue);
+    log.debug("Working with a max value of: " + maxRandValue);
 
     let minRandValue = 0;
     //this will return a random value between the max(exclusive) and min(inclusive)
@@ -219,9 +220,9 @@ function fastMapping(items)
     for(let itemIndex = randomNumberGenerator(localItems.length); localItems.length > 0; itemIndex = randomNumberGenerator(localItems.length)){
         
         let locationIndex = randomNumberGenerator(randomizedLocations.length);
-        console.log("Item Index '" + itemIndex +"' generated for item list with size '" + localItems.length + "'. Locations index '" + locationIndex + "' generated for location list with size '" + randomizedLocations.length + "'");
+        log.debug("Item Index '" + itemIndex +"' generated for item list with size '" + localItems.length + "'. Locations index '" + locationIndex + "' generated for location list with size '" + randomizedLocations.length + "'");
         localMappings.set(randomizedLocations[locationIndex], localItems[itemIndex]);
-        console.log("Fast mapping occurred! Added item'" + localItems[itemIndex] + "' at index '" + itemIndex + "' to location '" + randomizedLocations[locationIndex].prettyLocationName + "' at index '" + locationIndex + "'");
+        log.debug("Fast mapping occurred! Added item'" + localItems[itemIndex] + "' at index '" + itemIndex + "' to location '" + randomizedLocations[locationIndex].prettyLocationName + "' at index '" + locationIndex + "'");
 
         //Removing mapped items and locations
         randomizedLocations.splice(locationIndex, 1);
@@ -268,12 +269,12 @@ function GetRequiredItemsFromMappings(){
             if(coinResults.has(location))
             {
                 coin = coinResults.get(location);
-                console.log(`Coin previously flipped for location '${location.prettyLocationName}'. Result was '${coin}'`);
+                log.debug(`Coin previously flipped for location '${location.prettyLocationName}'. Result was '${coin}'`);
             }
             else 
             {
                 coin = randomNumberGenerator(2);
-                console.log(`Coin flipped! Result is '${coin}' for location '${location.prettyLocationName}'`);
+                log.debug(`Coin flipped! Result is '${coin}' for location '${location.prettyLocationName}'`);
                 coinResults.set(location, coin);
             }
 
@@ -333,7 +334,7 @@ function GetRequiredItemsFromMappings(){
     for (let i = randomNumberGenerator(keyItems.length); keyItems.length > 1; randomNumberGenerator(keyItems.length))
     {
         let itemToRemove = Array.from(keyItems)[i];
-        console.log(`Found multiple key items during required item mapping. Tossing '${itemToRemove}' from this run.`);
+        log.debug(`Found multiple key items during required item mapping. Tossing '${itemToRemove}' from this run.`);
         keyItems.delete(itemToRemove);
     }
    }
@@ -350,34 +351,34 @@ function GetRequiredItemsFromMappings(){
     }
 
    //Logging
-   console.log("For the provided checks:");
+   log.debug("For the provided checks:");
    locationToItemMapping.forEach((item, location) => {
-    console.log(location.prettyLocationName);
+    log.debug(location.prettyLocationName);
    });
-   console.log("Found these items to require for seed:");
+   log.debug("Found these items to require for seed:");
    
    requiredItems.forEach((blockedItems, item)=>{
     if(findInMap(locationToItemMapping, item))
     {
-        console.log(`${item} (Mapped)`);
+        log.debug(`${item} (Mapped)`);
     }
     else
     {
-        console.log(item);
+        log.debug(item);
     }
 
     //I need to look through blocked items until there are no more for this item
     blockedItems.forEach((blockedItem) => {
-        console.log(`\tWhich in turn blocks '${blockedItem}'`);
+        log.debug(`\tWhich in turn blocks '${blockedItem}'`);
     });
 
    });
 
    if (requiredItems.length === 0)
    {
-    console.log("No required items found, returning an empty set!");
+    log.debug("No required items found, returning an empty set!");
    }
-   console.log("Required item determination complete!");
+   log.debug("Required item determination complete!");
 
    //All done!
    return requiredItems;
@@ -388,13 +389,13 @@ This utility function will help manage the temporary required item dictionary fo
 */
 function addRequiredItem(itemName, location)
 {
-    console.log(`Attempting to add item '${itemName}' to location '${location.prettyLocationName}'.` );
+    log.debug(`Attempting to add item '${itemName}' to location '${location.prettyLocationName}'.` );
     
     //Check to see if the item is already a key in the previous required items.
     if(!requiredItems.has(itemName))
     {
         let blockerItems = new Set();
-        console.log(`item '${itemName}' has not been added to required items before. Adding it along with blocker list ${blockerItems}.`);
+        log.debug(`item '${itemName}' has not been added to required items before. Adding it along with blocker list ${blockerItems}.`);
         requiredItems.set(itemName, blockerItems);
     }
 
@@ -455,7 +456,7 @@ function recursiveBlockedItemCheck(recursiveBlockedItems, blockerItems){
 //Will complete the mappings per item received.
 //This mappings takes in to account the required items for each location it tries to place an item into to avoid basic lockouts.
 function logicalMapping(item){
-    console.log("|||Using logical mapping flow|||");
+    log.debug("|||Using logical mapping flow|||");
     let hasAHome = false;
 
     //create a new list based off the randomized locations list that has a randomized order. This will be used for placing things.
@@ -492,7 +493,7 @@ function logicalMapping(item){
 
         if(hasAHome)
         {
-            console.log("Found a home for item '" + item + "' at location '" + randoSortedLocations[i].prettyLocationName + "'");
+            log.debug("Found a home for item '" + item + "' at location '" + randoSortedLocations[i].prettyLocationName + "'");
             locationToItemMapping.set(randoSortedLocations[i], item);
             randomizedLocations.splice(randomizedLocations.findIndex((location) => {return location === randoSortedLocations[i]}) , 1);
             randomizedItems.splice(randomizedItems.findIndex((randoItem) => {return randoItem === item}), 1);
@@ -502,7 +503,7 @@ function logicalMapping(item){
     if(!hasAHome)
     {
         //Getting here means that we must have checked through all the remaining locations and that none of them could house an item we needed to place. For now let's throw an exception.
-        console.log("This seed was not completeable due to running out of locations to place things.");
+        log.warn("This seed was not completeable due to running out of locations to place things.");
         return;
     }
 }
@@ -538,7 +539,7 @@ function isLocationSafeForItem(location, item)
             isSafe = !location.additionalRequiredItemsForCheck.includes(item);
             break;
     }
-    console.log("Item '" + item + "' is safe at location '" + location.prettyLocationName + "' --- " + isSafe);
+    log.debug("Item '" + item + "' is safe at location '" + location.prettyLocationName + "' --- " + isSafe);
     return isSafe;
 }
 
