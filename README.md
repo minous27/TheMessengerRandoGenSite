@@ -1,4 +1,12 @@
-# Getting Started with Create React App
+# The Messenger Randomizer Seed Generator Site
+
+This project is for The Messenger Randomizer Seed Generator Site. Additional information can be found on [the project's wiki page](https://github.com/minous27/TheMessengerRandoGenSite/wiki).
+
+This site supports the generation of randomizer seeds that will be utilized by [The Messenger Randomizer Mod](https://github.com/minous27/TheMessengerRandomizerMod).
+
+React blurbage below...
+
+##React Blurbage
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
