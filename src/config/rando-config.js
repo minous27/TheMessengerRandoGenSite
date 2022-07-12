@@ -74,12 +74,13 @@ import { LocationRO } from "../RO/LocationRO";
         new LocationRO("236268-44-28", "Catacombs Seal - Triple Spike Crushers", [] , true, false, false), //Triple Spike Crushers
         new LocationRO("492524-44-28", "Catacombs Seal - Crusher Gauntlet", [] , true, false, false), //Crusher Gauntlet
         new LocationRO("556588-60-44", "Catacombs Seal - Dirty Pond", [] , true, false, false), //Dirty Pond
+        //Bamboo Creek
         new LocationRO("-84-52-28-12", "Bamboo Creek Seal - Spike crushers and Doors", [] , true, false, false), //Spike crushers and Doors
         new LocationRO("172236-44-28", "Bamboo Creek Seal - Spike ball pits", [] , true, false, false), //Spike ball pits
         new LocationRO("300332-1236", "Bamboo Creek Seal - Spike crushers and Doors v2", [] , true, false, false), //Spike crushers and doors v2
         //Howling Grotto
-        new LocationRO("108140-28-12", "Howling Grotto Seal - Windy Saws and Balls", [] , false, false, false), //Windy Saws and Balls
-        new LocationRO("300332-92-76", "Howling Grotto Seal - Crushing Pits", [] , false, false, false), //Crushing Pits
+        new LocationRO("108140-28-12", "Howling Grotto Seal - Windy Saws and Balls", [] , true, false, false), //Windy Saws and Balls *Use to be free, might still be in a Hard mode?*
+        new LocationRO("300332-92-76", "Howling Grotto Seal - Crushing Pits", [] , true, true, false), //Crushing Pits *Use to be free, might still be in a Hard mode?*
         new LocationRO("460492-172-156", "Howling Grotto Seal - Breezy Crushers", [] , false, false, false), //Breezy Crushers
         //Quillshroom Marsh
         new LocationRO("204236-28-12", "Quillshroom Marsh Seal - Spikey Window", [] , false, false, false), //Spikey Window
