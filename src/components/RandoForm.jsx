@@ -158,7 +158,8 @@ function RandoForm() {
         </div>
         <textarea className='logbox' disabled value={genLog}/><br/>
         <a rel='noreferrer' target='_blank' href='https://github.com/minous27/TheMessengerRandoGenSite/wiki'>Help</a><br/>
-        <img className='ruxxtin-gif' alt='ruxxtin gif' src={ruxxtin}/>
+        <img className='ruxxtin-gif' alt='ruxxtin gif' src={ruxxtin}/><br/>
+        Version {process.env.REACT_APP_VERSION}
       </form>
     );
 }

@@ -15,8 +15,14 @@ function App() {
   }
   
   //Set log level
-  log.setDefaultLevel(log.levels.INFO);
-  //log.setDefaultLevel(log.levels.DEBUG);
+  if(process.env.NODE_ENV !== 'production')
+  {
+    log.setDefaultLevel(log.levels.DEBUG);
+  }
+  else
+  {
+    log.setDefaultLevel(log.levels.INFO);
+  }
 
   return (
 
