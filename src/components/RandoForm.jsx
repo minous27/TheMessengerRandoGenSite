@@ -1,6 +1,6 @@
 import '../styles/RandoForm.css';
 import ruxxtin from '../assets/ruxxtin.gif';
-import log from 'loglevel';
+import log, { debug } from 'loglevel';
 import { useState } from 'react';
 import * as utilMethods from '../utils/SeedGenerator'
 import * as constantMethods from '../config/rando-config';
@@ -9,49 +9,31 @@ function RandoForm() {
     const [useLogicEngine, isUseLogicEngine] = useState(false);
     const [fileSlot, setFileSlot] = useState(1);
     const [difficulty, setDifficulty] = useState("Basic")
-    const [seed, setSeed] = useState({seedNum: 0, isLogicalSeed: false, difficulty:""});
-    const [mappingsStr, setMappingsStr] = useState();
+    // const [seed, setSeed] = useState({seedNum: 0, isLogicalSeed: false, difficulty:""});
+    const [seedNumInput, setSeedNumInput] = useState('');
+    const [mappingsStr, setMappingsStr] = useState('');
     const [genLog, setGenLog] = useState("");
-    
 
     const onEnterSettingsData = (event) =>{
-        
         event.preventDefault();
         event.stopPropagation();
 
-        //prep locations string for logging purposes.
-        let locationsStr = "";
-        let mappingStr = "|";
-
-        let seedNumInput = document.getElementById("seedNum").value;
-        
-        constantMethods.basicLocations.forEach((currentValue, index, arr) => {
-        let locationStr =  currentValue.ToString();
-        locationsStr = locationsStr + locationStr + "\n";
-        });
+        let seedNum = document.getElementById("seedNum").value;
 
         //set seed info
-        if(seedNumInput === '')
+        if(seedNum === '')
         {
-        seed.seedNum = utilMethods.GenerateSeed();
-        }
-        else
-        {
-        seed.seedNum = seedNumInput;
-        }
+          seedNum = utilMethods.GenerateSeed();
+          setSeedNumInput(seedNum);
+        }  
+
+        let seed = utilMethods.parseSeed(seedNum, useLogicEngine, difficulty);
         
-        seed.isLogicalSeed = useLogicEngine;
-        seed.difficulty = difficulty;
         try
         {
         //generate seed mappings
         let mappings = utilMethods.GenerateRandomizedMappings(seed);
-        prepareMappingString(mappings);
-
-        for (const[location, item] of mappings){
-            mappingStr = mappingStr + "Item: '" + item + "' ~ Location: '" + location.prettyLocationName + "'|\n"; 
-        }
-    
+        setMappingsStr(utilMethods.prepareMappingString(seed, mappings));
     
         //log
         setGenLog(
@@ -60,43 +42,13 @@ function RandoForm() {
             + "Use Logic Engine = " + useLogicEngine + "\n"
             + "Fileslot = " + fileSlot + "\n"
             + "Difficulty = " + difficulty + "\n");
-            //+ "Location = " + locationsStr + "\n"
-            //+ "Mappings = " + mappingStr + "\n");
         }
         catch(err)
         {
         //We would expect this if the mappings attempted were not logically completable.
         setGenLog(`Seed generation failed. Reason: ${err.message}`);
-        mappingStr = null;
+        throw err;
         }
-    }
-
-    const prepareMappingString = (mappings) =>{
-        //Get the mappings turned into a single string that is ready to be encrypted and given to the user.
-        
-        //mappings
-        let mappingsStr = "mappings=";
-
-        for(const [location, item] of mappings)
-        {
-        mappingsStr += `${location.locationName}~${item},`;
-        }
-        //Tear off the last comma
-        mappingsStr = mappingsStr.slice(0, -1);
-
-        //Difficulty
-        mappingsStr += `|Difficulty=${seed.difficulty}`;
-
-        //seed type
-        mappingsStr += `|seedtype=${seed.isLogicalSeed ? "Logic" : "No_Logic"}`;
-
-        //Seed number
-        mappingsStr += `|seednum=${seed.seedNum}`;
-
-        //log
-        log.debug(`Mapping prep completed. String prepped for file: '${mappingsStr}'`);
-
-        setMappingsStr(mappingsStr);
     }
     
     const generateRandoFile = () =>{
@@ -104,7 +56,7 @@ function RandoForm() {
         //Will do the work to create the file and download it on client machine.
         let encodedMappingsStr = btoa(mappingsStr); //DEPRECATED - may have to do this differently if moved to server
         log.debug(`Encoded mappings string: '${encodedMappingsStr}'`);
-        
+
         //Begin download
         let element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodedMappingsStr);
@@ -116,6 +68,28 @@ function RandoForm() {
         element.click();
 
         document.body.removeChild(element);
+    }
+
+    const generateSpoilerLog = () => {
+      //Generate mappings based on the provided seed number
+      let mappings = utilMethods.GenerateRandomizedMappings(utilMethods.parseSeed(seedNumInput, useLogicEngine, difficulty));
+      
+      //We'll want to generate the spoiler log for whatever seed number is provided.
+      let spoilerLog = `SPOILER LOG FOR SEED ${seedNumInput}:\n`;
+
+      mappings.forEach((item, location) => {
+        spoilerLog += `Location '${location.prettyLocationName}' contains Item '${item}'\n`;
+      });
+
+      setGenLog(spoilerLog);
+    }
+    
+    const clearSeed = () => {
+      //get a reference to the seed number field
+      setSeedNumInput('');
+      document.getElementById('seedNum').value = seedNumInput;
+      setMappingsStr('');
+      setGenLog('');
     }
 
     return(
@@ -130,8 +104,9 @@ function RandoForm() {
             <label>
                 Seed (optional)
                 <br/>
-              <input type="number" id="seedNum" name="seedNum" min="0"/>
+              <input type="number" id="seedNum" name="seedNum" min="0" value={seedNumInput} onInput={()=>{setSeedNumInput(document.getElementById('seedNum').value)}}/>
             </label>
+            <button type='button' id='clearBtn' onClick={clearSeed} disabled={!seedNumInput}>Clear</button>
           </div>
           <div className='file-slot-section'>
             <h3 className='section-title'>File Slot</h3>
@@ -155,11 +130,15 @@ function RandoForm() {
         <div>
           <button type='submit'>Generate</button>
           <button type='button' id='downloadBtn' onClick={generateRandoFile} disabled={mappingsStr ? false : true}>Download</button>
+          <br/>
+          <button type='button' id='spoilerBtn' onClick={generateSpoilerLog} disabled={!seedNumInput}>Spoiler Log</button>
         </div>
         <textarea className='logbox' disabled value={genLog}/><br/>
         <a rel='noreferrer' target='_blank' href='https://github.com/minous27/TheMessengerRandoGenSite/wiki'>Help</a><br/>
         <img className='ruxxtin-gif' alt='ruxxtin gif' src={ruxxtin}/><br/>
-        Version {process.env.REACT_APP_VERSION}
+        {/* In case I still feel like showing a version number on the site.
+         Version {process.env.REACT_APP_VERSION} 
+         */}
       </form>
     );
 }

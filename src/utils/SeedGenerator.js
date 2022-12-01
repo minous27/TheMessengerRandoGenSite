@@ -21,6 +21,38 @@ export function GenerateSeed()
     return (today & 0x0000BEEF);
 }
 
+export function parseSeed(seedNumber, isLogicalSeed, difficulty){
+    return {seedNum: seedNumber, isLogicalSeed: isLogicalSeed, difficulty: difficulty};
+}
+
+export function prepareMappingString(seed, mappings){
+    //Get the mappings turned into a single string that is ready to be encrypted and given to the user.
+    
+    //mappings
+    let mappingsStr = "mappings=";
+
+    for(const [location, item] of mappings)
+    {
+    mappingsStr += `${location.locationName}~${item},`;
+    }
+    //Tear off the last comma
+    mappingsStr = mappingsStr.slice(0, -1);
+
+    //Difficulty
+    mappingsStr += `|Difficulty=${seed.difficulty}`;
+
+    //seed type
+    mappingsStr += `|seedtype=${seed.isLogicalSeed ? "Logic" : "No_Logic"}`;
+
+    //Seed number
+    mappingsStr += `|seednum=${seed.seedNum}`;
+
+    //log
+    log.debug(`Mapping prep completed. String prepped for file: '${mappingsStr}'`);
+
+    return mappingsStr;
+}
+
 export function GenerateRandomizedMappings(seed)
 {
     log.debug("Beginning mapping generation for seed '" + seed.seedNum + "'.");
@@ -90,7 +122,7 @@ export function GenerateRandomizedMappings(seed)
 
         locationToItemMapping.forEach((value, key) => {
             log.debug("Item '" + value + "' mapped to '" + key.prettyLocationName + "'");
-        })
+        });
     }
     else
     {
