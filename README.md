@@ -6,7 +6,7 @@ This site supports the generation of randomizer seeds that will be utilized by [
 
 React blurbage below...
 
-##React Blurbage
+## React Blurbage
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

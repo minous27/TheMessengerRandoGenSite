@@ -11,7 +11,7 @@ function App() {
 
   const eeTriggerClick = () => {
     setEEClicks(eeClicks + 1);
-    console.log(`EE Clicks: ${eeClicks}`);
+    log.debug(`EE Clicks: ${eeClicks}`);
   }
   
   //Set log level
